@@ -3,9 +3,11 @@ package com.example.pebble_avideoplayer
 import android.net.Uri
 import android.net.Uri.parse
 import android.os.Bundle
+import android.util.Log.d
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.MediaController
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.navigation.findNavController
@@ -18,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,12 +36,31 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        checkPermissions()
+
         binding.fab.setOnClickListener { view ->
             Snackbar.make(view, "Spectre", Snackbar.LENGTH_LONG)
                 .setAnchorView(R.id.fab)
                 .setAction("Action", null).show()
         }
+
         settingUpMyVideoPlayer()
+    }
+
+    private fun checkPermissions() {
+
+            val requestPermissionlauncher = registerForActivityResult(ActivityResultContracts.RequestPermission())
+            { isGranted: Boolean ->
+
+                if (isGranted == true) {
+                    d("kelogs", "Permission Granted.")
+                    Snackbar.make(binding.root, "Permission Status : $isGranted ", Snackbar.LENGTH_LONG).show()
+                } else {
+                    d("kelogs", "Permission denied.")
+                }
+            }
+
+//        Snackbar.make(binding.root, "Permission Status : $requestPermissionlauncher ", Snackbar.LENGTH_LONG).show()
 
     }
 
@@ -80,5 +102,5 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
-
+    
 }
